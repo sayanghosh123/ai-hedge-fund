@@ -73,7 +73,8 @@ def portfolio_management_agent(state: AgentState):
     # Check the environment variable to decide which LLM to use
     use_azure_openai = os.getenv("USE_AZURE_OPENAI", "false").lower() == "true"
     if use_azure_openai:
-        llm = AzureChatOpenAI(model="gpt-4o")
+        azure_openai_endpoint_url = os.getenv("AZURE_OPENAI_ENDPOINT_URL")
+        llm = AzureChatOpenAI(model="gpt-4o", endpoint=azure_openai_endpoint_url)
     else:
         llm = ChatOpenAI(model="gpt-4o")
         
