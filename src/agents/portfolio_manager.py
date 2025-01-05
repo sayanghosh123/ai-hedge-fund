@@ -1,8 +1,9 @@
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai.chat_models import ChatOpenAI
+from langchain_openai.chat_models import ChatOpenAI, AzureChatOpenAI
 
 from graph.state import AgentState, show_agent_reasoning
+import os
 
 
 ##### Portfolio Management Agent #####
@@ -69,8 +70,13 @@ def portfolio_management_agent(state: AgentState):
             "portfolio_stock": portfolio["stock"],
         }
     )
-    # Invoke the LLM
-    llm = ChatOpenAI(model="gpt-4o")
+    # Check the environment variable to decide which LLM to use
+    use_azure_openai = os.getenv("USE_AZURE_OPENAI", "false").lower() == "true"
+    if use_azure_openai:
+        llm = AzureChatOpenAI(model="gpt-4o")
+    else:
+        llm = ChatOpenAI(model="gpt-4o")
+        
     result = llm.invoke(prompt)
 
     # Create the portfolio management message
